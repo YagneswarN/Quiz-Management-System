@@ -2,7 +2,9 @@
 from tkinter import *
 from PIL import Image, ImageTk  # Import Image and ImageTk from Pillow
 from csv import *
+from creat_quiz_ import * 
 import os
+
 
 class QuizSocApp:
     def __init__(self, root):
@@ -417,27 +419,11 @@ class QuizSocApp:
        
 
     def create_quiz(self):
+        a=QuizCreationApp(Tk())
     # Clear the current interface by destroying all existing widgets
         for widget in self.root.winfo_children():
             widget.destroy()  # Destroys the widget from the window
-        label = Label(self.root, text="Choose the quiz you want to make", font=("Calibri", 30), bg="#FFCCCC")
-        label.pack(pady=20)
-        # Now create and pack the new widgets
-        q_mcq_button = Button(self.root, text="MCQ", font=("Calibri", 14), command=self.q_no_and_time_limit, bg="#f44336", fg="white")
-        q_mcq_button.pack(pady=10)
-
-        q_tf_button = Button(self.root, text="True/False", font=("Calibri", 14), command=self.q_no_and_time_limit, bg="#f44336", fg="white")
-        q_tf_button.pack(pady=10)
-
-        q_sa_button = Button(self.root, text="Short Answer", font=("Calibri", 14), command=self.q_no_and_time_limit, bg="#f44336", fg="white")
-        q_sa_button.pack(pady=10)
-
-        # Add a label indicating the current interface
         
-
-        back_button = Button(self.root, text="Back", font=("Calibri", 14), command=self.go_to_admin_home_page, bg="green", fg="white")
-        back_button.pack(pady=10)
-       
 
     def check_leaderboard_user(self):
          # Clear the current interface
@@ -567,3 +553,5 @@ class QuizSocApp:
     def go_to_q_short_answer_interface(self):
         for widget in self.root.winfo_children():
             widget.pack_forget()
+            
+            
