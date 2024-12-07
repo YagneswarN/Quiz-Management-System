@@ -300,52 +300,36 @@ class QuizSocApp:
         back_button = Button(self.root, text="Back", font=("Calibri", 14), command=self.go_to_initial_interface, bg="#f44336", fg="white")
         back_button.pack(pady=10)
 
-
     def go_to_fourth_interface(self):
+        # Clear the current interface
         for widget in self.root.winfo_children():
-            widget.destroy()
+            widget.pack_forget()
 
         # Add a label indicating the current interface
-        label = Label(self.root, text="Sign Up - Enter your credentials:", font=("Calibri", 30), bg="#FFCCCC")
+        label = Label(self.root, text="Login - Enter your credentials:", font=("Calibri", 30), bg="#FFCCCC")
         label.pack(pady=20)
 
-        # Add a label and entry for username (Email)
-        email_label = Label(self.root, text="Email:", font=("Calibri", 16), bg="#FFCCCC")
-        email_label.pack(pady=5)
-        self.signup_username = Entry(self.root, width=50, font=("Calibri", 14))
-        self.signup_username.pack(pady=10, padx=40)
+        # Add entry widgets for username and password
+        self.login_username = Entry(self.root, width=50, font=("Calibri", 14))
+        self.login_username.pack(pady=10, padx=40)
+        self.login_password = Entry(self.root, width=50, font=("Calibri", 14), show="*")
+        self.login_password.pack(pady=10, padx=40)
 
-        # Add a label and entry for password
-        password_label = Label(self.root, text="Password:", font=("Calibri", 16), bg="#FFCCCC")
-        password_label.pack(pady=5)
-        self.signup_password = Entry(self.root, width=50, font=("Calibri", 14), show="*")
-        self.signup_password.pack(pady=10, padx=40)
-
-        # Add a "Show Password" checkbox
-        self.show_signup_password = BooleanVar()
-        show_password_check = Checkbutton(self.root, text="Show Password", variable=self.show_signup_password, command=self.toggle_login_password, font=("Calibri", 14), bg="#FFCCCC")
-        show_password_check.pack(pady=5)
-
-        # Add a Submit button for sign-up
-        submit_button = Button(self.root, text="Sign Up", font=("Calibri", 14), command=self.save_admin_signup_details, bg="#4CAF50", fg="white")
+        # Add a Submit button for login
+        submit_button = Button(self.root, text="Login", font=("Calibri", 14), command=self.validate_admin_login_details, bg="#4CAF50", fg="white")
         submit_button.pack(pady=10)
 
         # Label for confirmation message
-        self.signup_confirmation_label = Label(self.root, text="", font=("Calibri", 12), bg="#FFCCCC")
-        self.signup_confirmation_label.pack(pady=5)
+        self.login_confirmation_label = Label(self.root, text="", font=("Calibri", 12), bg="#FFCCCC")
+        self.login_confirmation_label.pack(pady=5)
 
         # Add a back button
-        back_button = Button(self.root, text="Back", font=("Calibri", 14), command=self.go_to_initial_interface, bg="#f44336", fg="white")
+        back_button = Button(self.root, text="Back", font=("Calibri", 14), command=self.go_to_initial_interface, bg="green", fg="white")
         back_button.pack(pady=10)
     
     def validate_user_login_details(self):
         username = self.login_username.get().strip()
         password = self.login_password.get().strip()
-
-        # Ensure the file exists
-        if not os.path.exists("user_credentials.txt"):
-            self.login_confirmation_label.config(text="No users found. Please sign up first.", fg="red")
-            return
 
         # Check if the entered username and password match any saved credentials
         try:
@@ -361,28 +345,19 @@ class QuizSocApp:
 
             if valid_user:
                 self.login_confirmation_label.config(text="Login successful!", fg="green")
-                # After 3 seconds, go to the main interface (home page)
-                self.root.after(3000, self.go_to_home_page)
+                # After 3 seconds, go to the initial interface (home page)
+
+                next_button = Button(self.root, text="Next", font=("Calibri", 14), command=self.go_to_user_home_page, bg="#f44336", fg="white")
+                next_button.pack(pady=10)
             else:
                 self.login_confirmation_label.config(text="Invalid username or password.", fg="red")
         except Exception as e:
-            self.login_confirmation_label.config(text=f"An error has occured,Please try again.", fg="red")
+            self.login_confirmation_label.config(text=f"Error reading file: {e}", fg="red")
             
-    def toggle_login_password(self):
-        # Toggle password visibility based on checkbox
-        if self.show_login_password.get():
-            self.login_password.config(show="")
-        else:
-            self.login_password.config(show="*") 
             
     def validate_admin_login_details(self):
         username = self.login_username.get().strip()
         password = self.login_password.get().strip()
-
-        # Ensure the file exists
-        if not os.path.exists("admin_credentials.txt"):
-            self.login_confirmation_label.config(text="Please sign up first.", fg="red")
-            return
 
         # Check if the entered username and password match any saved credentials
         try:
@@ -398,27 +373,14 @@ class QuizSocApp:
 
             if valid_user:
                 self.login_confirmation_label.config(text="Login successful!", fg="green")
-                # After 3 seconds, go to the main interface (home page)
-                self.root.after(3000, self.go_to_home_page)
+                # After 3 seconds, go to the initial interface (home page)
+                next_button = Button(self.root, text="Next", font=("Calibri", 14), command=self.go_to_admin_home_page, bg="#f44336", fg="white")
+                next_button.pack(pady=10)
             else:
                 self.login_confirmation_label.config(text="Invalid username or password.", fg="red")
         except Exception as e:
-            self.login_confirmation_label.config(text=f"An error has occured,Please try again.", fg="red")
-           
-        # Clear the current interface
-        for widget in self.root.winfo_children():
-            widget.pack_forget()
-
-        # Add a label indicating the current interface
-        label = Label(self.root, text="Welcome to Quiz Test!!", font=("Calibri", 30), bg="#FFCCCC")
-        label.pack(pady=20)        
-        take_quiz_button = Button(self.root, text="Take a quiz: ", font=("Calibri", 14), command=self.take_quiz, bg="#4CAF50", fg="white")
-        take_quiz_button.pack(pady=10)
-        leaderboard_button = Button(self.root, text="Check leaderboard", font=("Calibri", 14), command=self.check_leaderboard_user, bg="#4CAF50", fg="white")
-        leaderboard_button.pack(pady=10)
-        back_button = Button(self.root, text="Sign out/Exit", font=("Calibri", 14), command=self.go_to_initial_interface, bg="blue", fg="white")
-        back_button.pack(pady=10)
-        
+            self.login_confirmation_label.config(text=f"Error reading file: {e}", fg="red")
+   
     def go_to_admin_home_page(self):
            
         # Clear the current interface
