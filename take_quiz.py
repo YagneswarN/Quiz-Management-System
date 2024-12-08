@@ -136,20 +136,40 @@ class QuizTakingApp:
         self.create_navigation_buttons()
 
     def display_mcq_options(self, question_data):
-        """Display MCQ options with IntVar() to ensure single selection."""
-        self.mcq_var = tk.IntVar()
+        """Display MCQ options using Listbox."""
+        self.mcq_listbox = tk.Listbox(self.root)
+        self.mcq_listbox.pack(pady=10)
 
-        # Assign each option an integer value
+        # Add options to the Listbox
         for idx, option in enumerate(question_data["options"]):
-            tk.Radiobutton(self.root, text=option, variable=self.mcq_var, value=idx).pack()
+            self.mcq_listbox.insert(tk.END, option)
+
+        # Store selected option in a variable to be retrieved later
+        self.mcq_listbox.bind('<<ListboxSelect>>', self.on_mcq_select)
+
+    def on_mcq_select(self, event):
+        """Handle MCQ selection."""
+        selected_idx = self.mcq_listbox.curselection()
+        if selected_idx:
+            self.selected_mcq_answer = selected_idx[0]  # Get the index of the selected option
 
     def display_tf_options(self, question_data):
-        """Display True/False options.""" 
-        self.tf_var = tk.IntVar()
+        """Display True/False options using Listbox.""" 
+        self.tf_listbox = tk.Listbox(self.root)
+        self.tf_listbox.pack(pady=10)
 
-        # True and False options stored as 0 and 1
-        tk.Radiobutton(self.root, text="True", variable=self.tf_var, value=0).pack()
-        tk.Radiobutton(self.root, text="False", variable=self.tf_var, value=1).pack()
+        # Add True and False options to the Listbox
+        self.tf_listbox.insert(tk.END, "True")
+        self.tf_listbox.insert(tk.END, "False")
+
+        # Store selected option in a variable to be retrieved later
+        self.tf_listbox.bind('<<ListboxSelect>>', self.on_tf_select)
+
+    def on_tf_select(self, event):
+        """Handle True/False selection."""
+        selected_idx = self.tf_listbox.curselection()
+        if selected_idx:
+            self.selected_tf_answer = selected_idx[0]  # Get the index of the selected option (0 for True, 1 for False)
 
     def display_short_answer_field(self):
         """Display Short Answer input field.""" 
@@ -175,9 +195,9 @@ class QuizTakingApp:
         """Save the user's answer to the current question.""" 
         question_data = self.quiz.questions[self.current_question_index]
         if question_data["type"] == "MCQ":
-            self.user_answers.append(self.mcq_var.get())  # Save the selected index (int)
+            self.user_answers.append(self.selected_mcq_answer)  # Save the selected index (int)
         elif question_data["type"] == "True/False":
-            self.user_answers.append(self.tf_var.get())  # Save 0 (True) or 1 (False)
+            self.user_answers.append(self.selected_tf_answer)  # Save 0 (True) or 1 (False)
         elif question_data["type"] == "Short Answer":
             self.user_answers.append(self.sa_entry.get())
 
@@ -209,8 +229,6 @@ class QuizTakingApp:
 
         messagebox.showinfo("Quiz Completed", f"Your Score: {score}/{len(self.quiz.questions)}")
         self.root.destroy()
-
-
 
 if __name__ == "__main__":
     root = tk.Tk()
