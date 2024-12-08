@@ -1,9 +1,10 @@
-from tkinter import * 
+from tkinter import *
+from PIL import Image, ImageTk  # Import Image and ImageTk from Pillow
 from csv import *
 import create_quiz_ as cq
 import take_quiz as tq
 import os
-
+import leaderboard as lb
 
 class QuizSocApp:
     def __init__(self, root):
@@ -36,6 +37,23 @@ class QuizSocApp:
        
         button1.pack(pady=10)  # Add padding for spacing
         button2.pack(pady=10)
+       
+        # Resize and display the welcome image
+        icon_path = r'logo.png'
+        try:
+            img = Image.open(icon_path)  # Open image using Pillow
+            img = img.resize((200, 200))  # Resize image (width, height) to desired size
+            icon = ImageTk.PhotoImage(img)  # Convert to Tkinter format
+
+            self.root.iconphoto(True, icon)  # Set window icon
+            label = Label(self.root, image=icon, text="WELCOME", compound="top", pady=10, font=("Calibri", 24), bg="#FFCCCC")
+            label.image = icon  # Keep a reference to prevent garbage collection
+            label.pack()
+        except Exception as e:
+            print(f"Error loading image: {e}")  # Debugging output
+            label = Label(self.root, text="Image not found!", font=("Calibri", 20), bg="#FFCCCC")
+            label.pack(pady=50)
+
    
     def go_to_admin_interface(self):
         # Clear the current interface
@@ -417,7 +435,7 @@ class QuizSocApp:
         label.pack(pady=20)        
         take_quiz_button = Button(self.root, text="Take a quiz: ", font=("Calibri", 14), command=self.take_quiz, bg="#4CAF50", fg="white")
         take_quiz_button.pack(pady=10)
-        leaderboard_button = Button(self.root, text="Check leaderboard", font=("Calibri", 14), command=self.check_leaderboard_user, bg="#4CAF50", fg="white")
+        leaderboard_button = Button(self.root, text="Check leaderboard", font=("Calibri", 14), command=self.check_leaderboard, bg="#4CAF50", fg="white")
         leaderboard_button.pack(pady=10)
         back_button = Button(self.root, text="Sign out/Exit", font=("Calibri", 14), command=self.go_to_initial_interface, bg="blue", fg="white")
         back_button.pack(pady=10)
@@ -433,7 +451,7 @@ class QuizSocApp:
         label.pack(pady=20)        
         create_quiz__button = Button(self.root, text="Create quiz:", font=("Calibri", 14), command=self.create_quiz, bg="#4CAF50", fg="white")
         create_quiz__button.pack(pady=10)
-        leaderboard_button = Button(self.root, text="Check leaderboard", font=("Calibri", 14), command=self.check_leaderboard_admin, bg="#4CAF50", fg="white")
+        leaderboard_button = Button(self.root, text="Check leaderboard", font=("Calibri", 14), command=self.check_leaderboard, bg="#4CAF50", fg="white")
         leaderboard_button.pack(pady=10)
         back_button = Button(self.root, text="Sign out/Exit", font=("Calibri", 14), command=self.go_to_initial_interface, bg="blue", fg="white")
         back_button.pack(pady=10)
@@ -463,26 +481,12 @@ class QuizSocApp:
             widget.destroy()  # Destroys the widget from the window
         
 
-    def check_leaderboard_user(self):
-         # Clear the current interface
+    def check_leaderboard(self):
+        p=lb.QuizLeaderboard(Tk())
         for widget in self.root.winfo_children():
-            widget.pack_forget()
-
-        # Add a label indicating the current interface
-        label = Label(self.root, text="Welcome to leaderboard!!", font=("Calibri", 30), bg="#FFCCCC")
-        label.pack(pady=20)
-        back_button = Button(self.root, text="Back", font=("Calibri", 14), command=self.go_to_user_home_page, bg="green", fg="white")
-        back_button.pack(pady=10)
+            widget.destroy()
         
-    def check_leaderboard_admin(self):
-         # Clear the current interface
-        for widget in self.root.winfo_children():
-            widget.pack_forget()
 
-        # Add a label indicating the current interface
-        label = Label(self.root, text="Welcome to leaderboard!!", font=("Calibri", 30), bg="#FFCCCC")
-        label.pack(pady=20)
-        back_button = Button(self.root, text="Back", font=("Calibri", 14), command=self.go_to_admin_home_page, bg="green", fg="white")
-        back_button.pack(pady=10)
         
-               
+            
+                
