@@ -313,7 +313,7 @@ class QuizCreationApp:
                     writer.writerow([
                         question["question"],
                         "Short Answer",
-                        question["correct_answer"]
+                        question["correct_option"]
                     ])
 
         messagebox.showinfo("Quiz Saved", f"Quiz saved successfully as '{filename}'.")
