@@ -1,5 +1,4 @@
 from tkinter import *
-from PIL import Image, ImageTk 
 from csv import *
 from test17_final_modified import *
 from create_quiz_ import *
