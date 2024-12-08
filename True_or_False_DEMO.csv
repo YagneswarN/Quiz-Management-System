@@ -1,0 +1,9 @@
+Title,True_or_False_DEMO
+Description,Demo for True or False
+Type,True/False
+Questions
+1+1=2,True/False,0
+2+2=7,True/False,1
+Mahatma Gandhi was the first president of India,True/False,1
+Argentina lost the 2022 FIFA World Cup,True/False,1
+India won the 2011 World Cup,True/False,0
