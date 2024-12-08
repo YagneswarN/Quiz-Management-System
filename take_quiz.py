@@ -157,7 +157,7 @@ class QuizTakingApp:
         self.sa_entry.pack(pady=10)
 
     def create_navigation_buttons(self):
-        """Create navigation buttons for next and submit."""
+        """Create navigation buttons for next and submit.""" 
         if self.current_question_index < len(self.quiz.questions) - 1:
             next_button = tk.Button(self.root, text="Next", command=self.next_question)
             next_button.pack(pady=10)
@@ -195,15 +195,22 @@ class QuizTakingApp:
         # Save the results with the username
         with open('quiz_details', 'a+') as file:
             writer = csv.writer(file)
+    
             selected_index = self.listbox.curselection()  # Get the index of the selected quiz
+            
             if selected_index:
                 selected_quiz_info = self.listbox.get(selected_index)
                 quiz_name = selected_quiz_info.split(",")[0].split(":")[1].strip()  # Extract quiz name
+            else:
+                quiz_name = "Unknown Quiz"  # Set default value if no quiz is selected
 
+            # Now you can safely write to the file
             writer.writerow([self.username, quiz_name, score, len(self.quiz.questions)])
 
         messagebox.showinfo("Quiz Completed", f"Your Score: {score}/{len(self.quiz.questions)}")
-        self.root.quit()
+        self.root.destroy()
+
+
 
 if __name__ == "__main__":
     root = tk.Tk()

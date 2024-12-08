@@ -33,11 +33,11 @@ class TrueFalseQuiz(Quiz):
 
 
 class ShortAnswerQuiz(Quiz):
-    def add_question(self, question, correct_answer):
+    def add_question(self, question, correct_option):
         self.questions.append({
             "type": "Short Answer",
             "question": question,
-            "correct_answer": correct_answer
+            "correct_option": correct_option
         })
 
 
@@ -80,6 +80,14 @@ class QuizCreationApp:
         self.description_entry.pack()
 
         tk.Button(self.title_frame, text="Next", command=self.setup_quiz_creation_page).pack(pady=20)
+
+        # Adding the Back button
+        tk.Button(self.title_frame, text="Back", command=self.go_back_to_quiz_type_page).pack(pady=10)
+
+    def go_back_to_quiz_type_page(self):
+        """Go back to the quiz type selection page."""
+        self.title_frame.destroy()  # Destroy the current title frame
+        self.setup_quiz_type_page()  # Recreate the quiz type selection page
 
     def setup_quiz_creation_page(self):
         """Setup the quiz creation page."""
