@@ -1,5 +1,4 @@
-from tkinter import *
-from PIL import Image, ImageTk  # Import Image and ImageTk from Pillow
+from tkinter import * 
 from csv import *
 import create_quiz_ as cq
 import take_quiz as tq
@@ -37,23 +36,6 @@ class QuizSocApp:
        
         button1.pack(pady=10)  # Add padding for spacing
         button2.pack(pady=10)
-       
-        # Resize and display the welcome image
-        icon_path = r'logo.png'
-        try:
-            img = Image.open(icon_path)  # Open image using Pillow
-            img = img.resize((200, 200))  # Resize image (width, height) to desired size
-            icon = ImageTk.PhotoImage(img)  # Convert to Tkinter format
-
-            self.root.iconphoto(True, icon)  # Set window icon
-            label = Label(self.root, image=icon, text="WELCOME", compound="top", pady=10, font=("Calibri", 24), bg="#FFCCCC")
-            label.image = icon  # Keep a reference to prevent garbage collection
-            label.pack()
-        except Exception as e:
-            print(f"Error loading image: {e}")  # Debugging output
-            label = Label(self.root, text="Image not found!", font=("Calibri", 20), bg="#FFCCCC")
-            label.pack(pady=50)
-
    
     def go_to_admin_interface(self):
         # Clear the current interface
