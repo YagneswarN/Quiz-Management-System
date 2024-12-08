@@ -3,6 +3,8 @@ from tkinter import messagebox
 import csv
 import os
 
+
+
 class Quiz:
     def __init__(self, title, description):
         self.title = title
@@ -31,11 +33,11 @@ class TrueFalseQuiz(Quiz):
 
 
 class ShortAnswerQuiz(Quiz):
-    def add_question(self, question, correct_option):
+    def add_question(self, question, correct_answer):
         self.questions.append({
             "type": "Short Answer",
             "question": question,
-            "correct_option": correct_option
+            "correct_answer": correct_answer
         })
 
 
@@ -47,43 +49,37 @@ class QuizCreationApp:
         self.quiz = None
 
         self.quiz_type = None
-        self.current_frame = None  # Keep track of the current frame
         self.setup_quiz_type_page()
 
     def setup_quiz_type_page(self):
         """Setup the quiz type selection page."""
-        if self.current_frame:
-            self.current_frame.destroy()  # Destroy any previous frame
+        self.type_frame = tk.Frame(self.root)
+        self.type_frame.pack(fill=tk.BOTH, expand=True)
 
-        self.current_frame = tk.Frame(self.root)
-        self.current_frame.pack(fill=tk.BOTH, expand=True)
+        tk.Label(self.type_frame, text="Select Quiz Type", font=("Arial", 18)).pack(pady=20)
 
-        tk.Label(self.current_frame, text="Select Quiz Type", font=("Arial", 18)).pack(pady=20)
-
-        tk.Button(self.current_frame, text="Multiple Choice Quiz", command=lambda: self.setup_title_page("MCQ")).pack(pady=10)
-        tk.Button(self.current_frame, text="True/False Quiz", command=lambda: self.setup_title_page("True/False")).pack(pady=10)
-        tk.Button(self.current_frame, text="Short Answer Quiz", command=lambda: self.setup_title_page("Short Answer")).pack(pady=10)
+        tk.Button(self.type_frame, text="Multiple Choice Quiz", command=lambda: self.setup_title_page("MCQ")).pack(pady=10)
+        tk.Button(self.type_frame, text="True/False Quiz", command=lambda: self.setup_title_page("True/False")).pack(pady=10)
+        tk.Button(self.type_frame, text="Short Answer Quiz", command=lambda: self.setup_title_page("Short Answer")).pack(pady=10)
 
     def setup_title_page(self, quiz_type):
         """Setup the quiz title and description input page."""
         self.quiz_type = quiz_type
-        if self.current_frame:
-            self.current_frame.destroy()  # Destroy the previous frame
+        self.type_frame.destroy()
 
-        self.current_frame = tk.Frame(self.root)
-        self.current_frame.pack(fill=tk.BOTH, expand=True)
+        self.title_frame = tk.Frame(self.root)
+        self.title_frame.pack(fill=tk.BOTH, expand=True)
 
-        tk.Label(self.current_frame, text=f"{quiz_type} Quiz", font=("Arial", 18)).pack(pady=20)
-        tk.Label(self.current_frame, text="Quiz Title:").pack()
-        self.title_entry = tk.Entry(self.current_frame, width=50)
+        tk.Label(self.title_frame, text=f"{quiz_type} Quiz", font=("Arial", 18)).pack(pady=20)
+        tk.Label(self.title_frame, text="Quiz Title:").pack()
+        self.title_entry = tk.Entry(self.title_frame, width=50)
         self.title_entry.pack()
 
-        tk.Label(self.current_frame, text="Quiz Description:").pack()
-        self.description_entry = tk.Entry(self.current_frame, width=50)
+        tk.Label(self.title_frame, text="Quiz Description:").pack()
+        self.description_entry = tk.Entry(self.title_frame, width=50)
         self.description_entry.pack()
 
-        tk.Button(self.current_frame, text="Back", command=self.setup_quiz_type_page).pack(pady=10)
-        tk.Button(self.current_frame, text="Next", command=self.setup_quiz_creation_page).pack(pady=20)
+        tk.Button(self.title_frame, text="Next", command=self.setup_quiz_creation_page).pack(pady=20)
 
     def setup_quiz_creation_page(self):
         """Setup the quiz creation page."""
@@ -101,13 +97,11 @@ class QuizCreationApp:
         elif self.quiz_type == "Short Answer":
             self.quiz = ShortAnswerQuiz(title, description)
 
-        if self.current_frame:
-            self.current_frame.destroy()  # Destroy the title frame
+        self.title_frame.destroy()
+        self.creation_frame = tk.Frame(self.root)
+        self.creation_frame.pack(fill=tk.BOTH, expand=True)
 
-        self.current_frame = tk.Frame(self.root)
-        self.current_frame.pack(fill=tk.BOTH, expand=True)
-
-        tk.Label(self.current_frame, text=f"Create {self.quiz_type} Quiz", font=("Arial", 18)).pack(pady=20)
+        tk.Label(self.creation_frame, text=f"Create {self.quiz_type} Quiz", font=("Arial", 18)).pack(pady=20)
 
         if self.quiz_type == "MCQ":
             self.setup_mcq_creation_page()
@@ -118,12 +112,12 @@ class QuizCreationApp:
 
     def setup_mcq_creation_page(self):
         """Setup Multiple Choice Question creation page."""
-        tk.Label(self.current_frame, text="Question:").pack()
-        self.question_entry = tk.Entry(self.current_frame, width=50)
+        tk.Label(self.creation_frame, text="Question:").pack()
+        self.question_entry = tk.Entry(self.creation_frame, width=50)
         self.question_entry.pack()
 
-        tk.Label(self.current_frame, text="Options:").pack()
-        self.options_frame = tk.Frame(self.current_frame)
+        tk.Label(self.creation_frame, text="Options:").pack()
+        self.options_frame = tk.Frame(self.creation_frame)
         self.options_frame.pack()
 
         self.option_entry = tk.Entry(self.options_frame, width=40)
@@ -132,111 +126,149 @@ class QuizCreationApp:
         self.add_option_button = tk.Button(self.options_frame, text="Add Option", command=self.add_option)
         self.add_option_button.pack(side=tk.LEFT, padx=5)
 
-        self.options_listbox = tk.Listbox(self.current_frame, width=50, height=5)
+        self.options_listbox = tk.Listbox(self.creation_frame, width=50, height=5)
         self.options_listbox.pack(pady=10)
 
-        self.delete_option_button = tk.Button(self.current_frame, text="Delete Selected Option", command=self.delete_option)
+        self.delete_option_button = tk.Button(self.creation_frame, text="Delete Selected Option", command=self.delete_option)
         self.delete_option_button.pack(pady=5)
 
-        tk.Label(self.current_frame, text="Correct Option (Enter Index 1-4):").pack()
-        self.correct_option_entry = tk.Entry(self.current_frame, width=50)
+        tk.Label(self.creation_frame, text="Correct Option (Enter Index 1-4):").pack()
+        self.correct_option_entry = tk.Entry(self.creation_frame, width=50)
         self.correct_option_entry.pack()
 
         self.add_common_controls()
 
     def setup_tf_creation_page(self):
         """Setup True/False Question creation page."""
-        tk.Label(self.current_frame, text="Question:").pack()
-        self.question_entry = tk.Entry(self.current_frame, width=50)
+        tk.Label(self.creation_frame, text="Question:").pack()
+        self.question_entry = tk.Entry(self.creation_frame, width=50)
         self.question_entry.pack()
 
-        tk.Label(self.current_frame, text="Correct Answer (True/False):").pack()
-        self.correct_option_entry = tk.Entry(self.current_frame, width=50)
+        tk.Label(self.creation_frame, text="Correct Answer (True/False):").pack()
+        self.correct_option_entry = tk.Entry(self.creation_frame, width=50)
         self.correct_option_entry.pack()
 
         self.add_common_controls()
 
     def setup_sa_creation_page(self):
         """Setup Short Answer Question creation page."""
-        tk.Label(self.current_frame, text="Question:").pack()
-        self.question_entry = tk.Entry(self.current_frame, width=50)
+        tk.Label(self.creation_frame, text="Question:").pack()
+        self.question_entry = tk.Entry(self.creation_frame, width=50)
         self.question_entry.pack()
 
-        tk.Label(self.current_frame, text="Correct Answer:").pack()
-        self.correct_option_entry = tk.Entry(self.current_frame, width=50)
+        tk.Label(self.creation_frame, text="Correct Answer:").pack()
+        self.correct_option_entry = tk.Entry(self.creation_frame, width=50)
         self.correct_option_entry.pack()
 
         self.add_common_controls()
 
     def add_common_controls(self):
         """Add controls common to all quiz types."""
-        tk.Button(self.current_frame, text="Add Question", command=self.add_question).pack(pady=10)
-        tk.Label(self.current_frame, text="Questions:").pack()
-        self.questions_listbox = tk.Listbox(self.current_frame, width=80, height=10)
+        tk.Button(self.creation_frame, text="Add Question", command=self.add_question).pack(pady=10)
+        tk.Label(self.creation_frame, text="Questions:").pack()
+        self.questions_listbox = tk.Listbox(self.creation_frame, width=80, height=10)
         self.questions_listbox.pack(pady=10)
 
-        self.delete_question_button = tk.Button(self.current_frame, text="Delete Selected Question", command=self.delete_question)
+        self.delete_question_button = tk.Button(self.creation_frame, text="Delete Selected Question", command=self.delete_question)
         self.delete_question_button.pack(pady=5)
 
-        self.save_quiz_button = tk.Button(self.current_frame, text="Save Quiz", command=self.save_quiz)
+        self.save_quiz_button = tk.Button(self.creation_frame, text="Save Quiz", command=self.save_quiz)
         self.save_quiz_button.pack(pady=20)
 
     def add_option(self):
-        """Add an option for MCQ question."""
+        """Add an option to the current question."""
         option = self.option_entry.get().strip()
-        if option:
-            self.options_listbox.insert(tk.END, option)
-            self.option_entry.delete(0, tk.END)
+        if not option:
+            messagebox.showwarning("Input Error", "Option cannot be empty.")
+            return
+        current_options = self.options_listbox.size() + 1
+        if current_options > 4:
+            messagebox.showwarning("Input Error", "You can only add up to 4 options.")
+            return
+        self.options_listbox.insert(tk.END, f"{current_options}. {option}")
+        self.option_entry.delete(0, tk.END)
 
     def delete_option(self):
-        """Delete selected option for MCQ question."""
-        selected = self.options_listbox.curselection()
-        if selected:
-            self.options_listbox.delete(selected)
+        """Delete the selected option."""
+        selected_index = self.options_listbox.curselection()
+        if not selected_index:
+            messagebox.showwarning("Selection Error", "No option selected.")
+            return
+        self.options_listbox.delete(selected_index)
+        self.reorder_options()
+
+    def reorder_options(self):
+        """Reorder the options in the listbox after deletion."""
+        all_options = self.options_listbox.get(0, tk.END)
+        self.options_listbox.delete(0, tk.END)
+        for index, option in enumerate(all_options, start=1):
+            self.options_listbox.insert(tk.END, f"{index}. {option.split('. ', 1)[1]}")
 
     def add_question(self):
-        """Add the current question to the quiz."""
+        """Add a question to the quiz."""
         question = self.question_entry.get().strip()
-        correct_option = self.correct_option_entry.get().strip()
-
-        if not question or not correct_option:
-            messagebox.showwarning("Input Error", "Please fill in all fields before adding a question.")
+        if not question:
+            messagebox.showwarning("Input Error", "Question cannot be empty.")
             return
 
         if self.quiz_type == "MCQ":
-            options = [self.options_listbox.get(i) for i in range(self.options_listbox.size())]
-            self.quiz.add_question(question, options, correct_option)
-        elif self.quiz_type == "True/False" or self.quiz_type == "Short Answer":
-            self.quiz.add_question(question, correct_option)
+            options = list(self.options_listbox.get(0, tk.END))
+            if len(options) < 2:
+                messagebox.showwarning("Input Error", "At least two options are required.")
+                return
 
-        self.question_entry.delete(0, tk.END)
-        self.correct_option_entry.delete(0, tk.END)
-        self.options_listbox.delete(0, tk.END)
+            try:
+                correct_option = int(self.correct_option_entry.get().strip())
+                if not (1 <= correct_option <= len(options)):
+                    messagebox.showwarning("Input Error", "Correct option index is out of range.")
+                    return
+            except ValueError:
+                messagebox.showwarning("Input Error", "Correct option must be an integer.")
+                return
 
-        self.update_questions_listbox()
+            self.quiz.add_question(
+                question,
+                [opt.split(". ", 1)[1] for opt in options],
+                correct_option - 1
+            )
+        elif self.quiz_type == "True/False":
+            correct_option = self.correct_option_entry.get().strip().capitalize()
+            if correct_option not in ["True", "False"]:
+                messagebox.showwarning("Input Error", "Correct answer must be 'True' or 'False'.")
+                return
+            self.quiz.add_question(question, 0 if correct_option == "True" else 1)
+        elif self.quiz_type == "Short Answer":
+            correct_answer = self.correct_option_entry.get().strip()
+            if not correct_answer:
+                messagebox.showwarning("Input Error", "Correct answer cannot be empty.")
+                return
+            self.quiz.add_question(question, correct_answer)
 
-    def update_questions_listbox(self):
-        """Update the list of questions in the UI."""
+        self.update_question_list()
+        self.clear_fields()
+
+    def update_question_list(self):
+        """Update the listbox with indexed questions."""
         self.questions_listbox.delete(0, tk.END)
-        for question in self.quiz.questions:
-            if question["type"] == "MCQ":
-                display = f"{question['question']} (Options: {', '.join(question['options'])})"
-            elif question["type"] == "True/False":
-                display = f"{question['question']} (Answer: {question['correct_option']})"
-            elif question["type"] == "Short Answer":
-                display = f"{question['question']} (Answer: {question['correct_option']})"
-            self.questions_listbox.insert(tk.END, display)
+        for index, question in enumerate(self.quiz.questions, start=1):
+            self.questions_listbox.insert(tk.END, f"{index}. {question['question']}")
 
     def delete_question(self):
-        """Delete selected question."""
-        selected = self.questions_listbox.curselection()
-        if selected:
-            question_text = self.questions_listbox.get(selected[0])
-            for question in self.quiz.questions:
-                if question_text.startswith(question["question"]):
-                    self.quiz.questions.remove(question)
-                    break
-            self.update_questions_listbox()
+        """Delete the selected question."""
+        selected_index = self.questions_listbox.curselection()
+        if not selected_index:
+            messagebox.showwarning("Selection Error", "No question selected.")
+            return
+        self.questions_listbox.delete(selected_index)
+        del self.quiz.questions[selected_index[0]]
+        self.update_question_list()
+
+    def clear_fields(self):
+        """Clear input fields."""
+        self.question_entry.delete(0, tk.END)
+        if self.quiz_type == "MCQ":
+            self.options_listbox.delete(0, tk.END)
+        self.correct_option_entry.delete(0, tk.END)
 
     def save_quiz(self):
         """Save the quiz to a CSV file."""
@@ -248,7 +280,7 @@ class QuizCreationApp:
         
         with open('quizzes_created','a+') as overall_quiz_file:
             writer=csv.writer(overall_quiz_file)
-            writer.writerow([self.quiz.title, self.quiz_type])
+            writer.writerow([self.quiz.title,self.quiz_type])
 
         with open(filename, "w", newline="", encoding="utf-8") as file:
             writer = csv.writer(file)
@@ -258,11 +290,23 @@ class QuizCreationApp:
             writer.writerow(["Questions"])
             for question in self.quiz.questions:
                 if question["type"] == "MCQ":
-                    writer.writerow([question["question"], "|".join(question["options"]), question["correct_option"]])
+                    writer.writerow([
+                        question["question"],
+                        "|".join(question["options"]),
+                        question["correct_option"]
+                    ])
                 elif question["type"] == "True/False":
-                    writer.writerow([question["question"], "True/False", question["correct_option"]])
+                    writer.writerow([
+                        question["question"],
+                        "True/False",
+                        question["correct_option"]
+                    ])
                 elif question["type"] == "Short Answer":
-                    writer.writerow([question["question"], "Short Answer", question["correct_option"]])
+                    writer.writerow([
+                        question["question"],
+                        "Short Answer",
+                        question["correct_answer"]
+                    ])
 
         messagebox.showinfo("Quiz Saved", f"Quiz saved successfully as '{filename}'.")
         self.root.destroy()
