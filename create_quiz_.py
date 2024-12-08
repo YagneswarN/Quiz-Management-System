@@ -4,6 +4,7 @@ import csv
 import os
 
 
+
 class Quiz:
     def __init__(self, title, description):
         self.title = title
@@ -32,11 +33,11 @@ class TrueFalseQuiz(Quiz):
 
 
 class ShortAnswerQuiz(Quiz):
-    def add_question(self, question, correct_answer):
+    def add_question(self, question, correct_option):
         self.questions.append({
             "type": "Short Answer",
             "question": question,
-            "correct_answer": correct_answer
+            "correct_option": correct_option
         })
 
 
@@ -237,11 +238,11 @@ class QuizCreationApp:
                 return
             self.quiz.add_question(question, 0 if correct_option == "True" else 1)
         elif self.quiz_type == "Short Answer":
-            correct_answer = self.correct_option_entry.get().strip()
-            if not correct_answer:
+            correct_option = self.correct_option_entry.get().strip()
+            if not correct_option:
                 messagebox.showwarning("Input Error", "Correct answer cannot be empty.")
                 return
-            self.quiz.add_question(question, correct_answer)
+            self.quiz.add_question(question, correct_option)
 
         self.update_question_list()
         self.clear_fields()
@@ -275,8 +276,11 @@ class QuizCreationApp:
             messagebox.showwarning("Save Error", "Please add at least one question before saving.")
             return
 
-        os.makedirs("quizzes", exist_ok=True)
-        filename = f"quizzes/{self.quiz.title.replace(' ', '_')}.csv"
+        filename = f"{self.quiz.title.replace(' ', '_')}.csv"
+        
+        with open('quizzes_created','a+') as overall_quiz_file:
+            writer=csv.writer(overall_quiz_file)
+            writer.writerow([self.quiz.title,self.quiz_type])
 
         with open(filename, "w", newline="", encoding="utf-8") as file:
             writer = csv.writer(file)
@@ -301,7 +305,7 @@ class QuizCreationApp:
                     writer.writerow([
                         question["question"],
                         "Short Answer",
-                        question["correct_answer"]
+                        question["correct_option"]
                     ])
 
         messagebox.showinfo("Quiz Saved", f"Quiz saved successfully as '{filename}'.")

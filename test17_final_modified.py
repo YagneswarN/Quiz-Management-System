@@ -1,8 +1,8 @@
-# from test import *
 from tkinter import *
 from PIL import Image, ImageTk  # Import Image and ImageTk from Pillow
 from csv import *
-from creat_quiz_ import * 
+import create_quiz_ as cq
+import take_quiz as tq
 import os
 
 
@@ -39,7 +39,7 @@ class QuizSocApp:
         button2.pack(pady=10)
        
         # Resize and display the welcome image
-        icon_path = r'2.png'
+        icon_path = r'logo.png'
         try:
             img = Image.open(icon_path)  # Open image using Pillow
             img = img.resize((200, 200))  # Resize image (width, height) to desired size
@@ -430,7 +430,6 @@ class QuizSocApp:
         # Clear the current interface
         for widget in self.root.winfo_children():
             widget.pack_forget()
-
         # Add a label indicating the current interface
         label = Label(self.root, text="Welcome to Quiz Test!!", font=("Calibri", 30), bg="#FFCCCC")
         label.pack(pady=20)        
@@ -456,28 +455,27 @@ class QuizSocApp:
         leaderboard_button.pack(pady=10)
         back_button = Button(self.root, text="Sign out/Exit", font=("Calibri", 14), command=self.go_to_initial_interface, bg="blue", fg="white")
         back_button.pack(pady=10)
+    def display(self):
         
+        with open('quizzes_created','r+') as file:
+            reader1=reader(file)
+            for row in reader1:
+                if row[1]=='MCQ':
+                    for widget in self.root.winfo_children():
+                        widget.pack_forget()
+                    next_button = Button(self.root, text=f"{row[0]}", font=("Calibri", 14), command=lambda:self.take_quiz, bg="#f44336", fg="white")
+                    next_button.pack(pady=10)    
         
         
     def take_quiz(self):
+        b=tq.QuizTakingApp(Tk())
+    # Clear the current interface by destroying all existing widgets
         for widget in self.root.winfo_children():
-            widget.pack_forget()
-
-        mcq_button = Button(self.root, text="MCQ", font=("Calibri", 14), command=self.go_to_mcq_interface, bg="#f44336", fg="white")
-        mcq_button.pack(pady=10)
-        tf_button = Button(self.root, text="True/False", font=("Calibri", 14), command=self.go_to_tf_interface, bg="#f44336", fg="white")
-        tf_button.pack(pady=10)
-        sa_button = Button(self.root, text="Short Answer", font=("Calibri", 14), command=self.go_to_short_answer_interface, bg="#f44336", fg="white")
-        sa_button.pack(pady=10)
-
-        label = Label(self.root, text="Choose the quiz you want to take!!", font=("Calibri", 30), bg="#FFCCCC")
-        label.pack(pady=20)
-        back_button = Button(self.root, text="Back", font=("Calibri", 14), command=self.go_to_user_home_page, bg="green", fg="white")
-        back_button.pack(pady=10)
+            widget.destroy()  # Destroys the widget from the window
        
 
     def create_quiz(self):
-        a=QuizCreationApp(Tk())
+        a=cq.QuizCreationApp(Tk())
     # Clear the current interface by destroying all existing widgets
         for widget in self.root.winfo_children():
             widget.destroy()  # Destroys the widget from the window
@@ -505,110 +503,4 @@ class QuizSocApp:
         back_button = Button(self.root, text="Back", font=("Calibri", 14), command=self.go_to_admin_home_page, bg="green", fg="white")
         back_button.pack(pady=10)
         
-    def go_to_intermediate(self):
-    # Remove all previous widgets
-        for widget in self.root.winfo_children():
-            widget.pack_forget()
-
-    # Get the data from the entry fields
-        q_no = self.q_no.get()
-        q_time_limit = self.q_time_limit.get()
-
-    # Format the message for the label
-        message = f"You have selected to make a quiz that is {q_no} questions long and has a duration of {q_time_limit} minutes."
-
-        # Create and pack the label
-        label = Label(self.root, text=message, font=("Calibri", 16), bg="#FFCCCC")
-        label.pack(pady=20)
-
-        # Create and pack the buttons
-        continue_button = Button(self.root, text="Create quiz", font=("Calibri", 14),command=self.go_to_create_mcq_quiz_page, bg="#f44336", fg="white")
-        continue_button.pack(pady=10)
-
-        back_button = Button(self.root, text="Back", font=("Calibri", 14), command=self.go_to_admin_home_page, bg="green", fg="white")
-        back_button.pack(pady=10)
-    def go_to_create_mcq_quiz_page(self):
-        q_no=int(self.q_no.get())
-        time_limit=self.q_time_limit.get()
-        for widget in self.root.winfo_children():
-            widget.pack_forget() 
-        for i in range (q_no):
-            for widget in self.root.winfo_children():
-                widget.pack_forget()
-            label1 = Label(self.root, text="Write Question", font=("Calibri", 30), bg="#FFCCCC")
-            label1.grid(row=0,column=1,pady=20)
-            label2 = Label(self.root, text="Option A", font=("Calibri", 30), bg="#FFCCCC")
-            label2.grid(row=2,column=1,pady=20)
-            label3 = Label(self.root, text="Option B", font=("Calibri", 30), bg="#FFCCCC")
-            label3.grid(row=3,column=1,pady=20)
-            label4 = Label(self.root, text="Option C", font=("Calibri", 30), bg="#FFCCCC")
-            label4.grid(row=4,column=1,pady=20)
-            label5 = Label(self.root, text="Option D", font=("Calibri", 30), bg="#FFCCCC")
-            label5.grid(row=5,column=1,pady=20)
-            question = Entry(self.root,width=50, font=("Calibri", 14))
-            question.grid(row=1,column=2,pady=10, padx=40)
-            a = Entry(self.root,text='Option A', width=50, font=("Calibri", 14))
-            a.grid(row=2,column=2,pady=10, padx=40)
-            b = Entry(self.root,text='Option B', width=50, font=("Calibri", 14))
-            b.grid(row=3,column=2,pady=10, padx=40)
-            c = Entry(self.root,text='Option C', width=50, font=("Calibri", 14))
-            c.grid(row=4,column=2,pady=10, padx=40)
-            d = Entry(self.root,text='Option D', width=50, font=("Calibri", 14))
-            d.grid(row=5,column=2,pady=10, padx=40)
-             
-    # def go_to_create_mcq_quiz_page(self,time_limit,q_no):
-    #     for widget in self.root.winfo_children():
-    #         widget.pack_forget()   
-   
-    def q_no_and_time_limit(self):
-        for widget in self.root.winfo_children():
-            widget.pack_forget()
-        label1 = Label(self.root, text="Select number of questions", font=("Calibri", 30), bg="#FFCCCC")
-        label1.pack(pady=20)
-        self.q_no = Entry(self.root, width=50, font=("Calibri", 14))
-        self.q_no.pack(pady=10, padx=40)
-        label2 = Label(self.root, text="Select time limit", font=("Calibri", 30), bg="#FFCCCC")
-        label2.pack(pady=20)
-        self.q_time_limit = Entry(self.root, width=50, font=("Calibri", 14))
-        self.q_time_limit.pack(pady=10, padx=40)
-        next_button = Button(self.root, text="Next", font=("Calibri", 14), command=self.go_to_intermediate, bg="#f44336", fg="white")
-        next_button.pack(pady=10)
-        home_button = Button(self.root, text="Home", font=("Calibri", 14),command=self.go_to_admin_home_page, bg="#f44336", fg="white")
-        home_button.pack(pady=10)
-            
-    def go_to_mcq_q_interface(self):
-        for widget in self.root.winfo_children():
-            widget.pack_forget()
-        label = Label(self.root, text="Choose your quiz!!", font=("Calibri", 30), bg="#FFCCCC")
-        label.pack(pady=20)    
-        
-        # for i in range(self.q_no.get()):
-        #     pass 
-    def go_to_tf_interface(self):
-        for widget in self.root.winfo_children():
-            widget.pack_forget()
-        label = Label(self.root, text="Choose your quiz!!", font=("Calibri", 30), bg="#FFCCCC")
-        label.pack(pady=20)  
-        home_button = Button(self.root, text="Home", font=("Calibri", 14),command=self.go_to_user_home_page, bg="#f44336", fg="white")
-        home_button.pack(pady=10)
-    def go_to_short_answer_interface(self):
-        for widget in self.root.winfo_children():
-            widget.pack_forget()
-        label = Label(self.root, text="Choose your quiz!!", font=("Calibri", 30), bg="#FFCCCC")
-        label.pack(pady=20)  
-        home_button = Button(self.root, text="Home", font=("Calibri", 14),command=self.go_to_user_home_page, bg="#f44336", fg="white")
-        home_button.pack(pady=10)
-    def go_to_mcq_interface(self):
-        for widget in self.root.winfo_children():
-            widget.pack_forget()
-        label = Label(self.root, text="Choose your quiz!!", font=("Calibri", 30), bg="#FFCCCC")
-        label.pack(pady=20)  
-        home_button = Button(self.root, text="Home", font=("Calibri", 14),command=self.go_to_user_home_page, bg="#f44336", fg="white")
-        home_button.pack(pady=10)
-    def go_to_tf_q_interface(self):
-        for widget in self.root.winfo_children():
-            widget.pack_forget()
-    def go_to_q_short_answer_interface(self):
-        for widget in self.root.winfo_children():
-            widget.pack_forget()
-            
+               

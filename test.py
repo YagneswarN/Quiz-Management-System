@@ -1,9 +1,10 @@
 from tkinter import *
-from PIL import Image, ImageTk  # Import Image and ImageTk from Pillow
+from PIL import Image, ImageTk 
 from csv import *
-from test17 import *
-        
-
+from test17_final_modified import *
+from create_quiz_ import *
+from take_quiz import *
+    
 
 # Create the initial application window
 root = Tk()
