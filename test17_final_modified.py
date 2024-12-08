@@ -469,22 +469,15 @@ class QuizSocApp:
         
     def take_quiz(self):
         b=tq.QuizTakingApp(Tk())
-    # Clear the current interface by destroying all existing widgets
-        for widget in self.root.winfo_children():
-            widget.destroy()  # Destroys the widget from the window
-       
+    
 
     def create_quiz(self):
         a=cq.QuizCreationApp(Tk())
     # Clear the current interface by destroying all existing widgets
-        for widget in self.root.winfo_children():
-            widget.destroy()  # Destroys the widget from the window
-        
+
 
     def check_leaderboard(self):
         p=lb.QuizLeaderboard(Tk())
-        for widget in self.root.winfo_children():
-            widget.destroy()
         
 
         
